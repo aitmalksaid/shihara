@@ -1,0 +1,126 @@
+.navigation {
+  width: 250px;
+  background-color: #1a659e;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.nav-header {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.nav-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.nav-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-link {
+  display: block;
+  padding: 15px 20px;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: bold;
+}
+
+.nav-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info {
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 1001;
+  background: #1a659e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.nav-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .navigation {
+    width: 280px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .navigation.open {
+    transform: translateX(0);
+  }
+
+  .nav-overlay {
+    display: block;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+  }
+}

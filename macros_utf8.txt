@@ -1,0 +1,199 @@
+olevba 0.60.2 on Python 3.13.1 - http://decalage.info/python/oletools
+===============================================================================
+FILE: D:\shihara\achatmatierepremiereshihara\omar.xlsm
+Type: OpenXML
+WARNING  For now, VBA stomping cannot be detected for files in memory
+-------------------------------------------------------------------------------
+VBA MACRO ThisWorkbook.cls 
+in file: xl/vbaProject.bin - OLE stream: 'VBA/ThisWorkbook'
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+(empty macro)
+-------------------------------------------------------------------------------
+VBA MACRO Feuil1.cls 
+in file: xl/vbaProject.bin - OLE stream: 'VBA/Feuil1'
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+(empty macro)
+-------------------------------------------------------------------------------
+VBA MACRO Feuil2.cls 
+in file: xl/vbaProject.bin - OLE stream: 'VBA/Feuil2'
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+(empty macro)
+-------------------------------------------------------------------------------
+VBA MACRO Module1.bas 
+in file: xl/vbaProject.bin - OLE stream: 'VBA/Module1'
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Sub facture()
+'Macro de cr├®ation auto de TOUTES les feuilles
+'----------------------------------------------
+Dim Fdata As Worksheet
+Dim NomF As String
+Dim ListFeuille As Range
+Dim ligne As Integer
+
+Dim nomfeuille As String
+nomfeuille = ActiveSheet.Name
+
+Set Fdata = Sheets(nomfeuille)
+'Set Fdata = Sheets("client")
+
+
+Set ListFeuille = Fdata.Range("A8:A800")
+
+'on boucle sur les diff├®rentes lignes :
+For Each cell In ListFeuille
+  'On r├®cup├¿re le nom de la "future" feuille
+   NomF = cell.Value
+   
+   'si nomF <> ""
+   If NomF <> "" Then
+   'On recupere le numero de ligne
+   
+     If NomF = "Total" Then
+        'NomF = ""
+        Exit For
+     End If
+     
+
+   
+    ligne = cell.Row
+    Call AutoCreaSheets(Fdata, NomF, ligne)
+   End If
+    
+  Next 'Ligne suivante
+End Sub
+
+Sub AutoCreaSheets(Fdata As Worksheet, NomF As String, ligne As Integer)
+'---------------------------------------------
+'Macro de cr├®ation auto d'une Feuille
+'----------------------------------------------
+
+   'On duplique la feuille Modele
+    Call duplicateModele(NomF)
+     
+   '--------------------------------------
+   'On rempli les cases ...
+   '--------------------------------------
+   
+   'recup├®ration des valeurs de la feuille source
+    Ref = Fdata.Cells(ligne, 1).Value ' Colonne B
+    Date_reception = Fdata.Cells(ligne, 2).Value ' Colonne B
+    Qte = Fdata.Cells(ligne, 3).Value ' Colonne C
+    Ecart = Fdata.Cells(ligne, 4).Value ' Colonne D
+    
+    Choix1 = Fdata.Cells(ligne, 5).Value ' Colonne E
+    Choix2 = Fdata.Cells(ligne + 1, 5).Value ' Colonne E
+    Choix3 = Fdata.Cells(ligne + 2, 5).Value ' Colonne E
+    
+    Qte1 = Fdata.Cells(ligne, 6).Value  ' Colonne F
+    Qte2 = Fdata.Cells(ligne + 1, 6).Value
+    Qte3 = Fdata.Cells(ligne + 2, 6).Value
+    
+    If Fdata.Cells(ligne + 3, 5).Value = "TR" Or Fdata.Cells(ligne + 3, 5).Value = "TR2" Then
+        Qte4 = Fdata.Cells(ligne + 3, 6).Value
+        Poids4 = Fdata.Cells(ligne + 3, 7).Value
+    Else
+       Qte4 = ""
+       Poids4 = ""
+    End If
+    
+    
+    'Qte4 = Fdata.Cells(ligne + 3, 6).Value
+    
+    
+    Poids1 = Fdata.Cells(ligne, 7).Value  ' Colonne G
+    Poids2 = Fdata.Cells(ligne + 1, 7).Value
+    Poids3 = Fdata.Cells(ligne + 2, 7).Value
+    
+    
+    PRIX = Fdata.Cells(ligne, 8).Value    'Colonne H
+    
+     
+    ' On copie les valeurs dans la nouvelle Feuille...
+    Sheets(NomF).Range("H16").Value = Ref
+    Sheets(NomF).Range("H17").Value = Date_reception
+    Sheets(NomF).Range("C16").Value = Qte
+    Sheets(NomF).Range("C17").Value = Ecart
+    Sheets(NomF).Range("D27").Value = Choix1
+    Sheets(NomF).Range("D28").Value = Choix2
+    Sheets(NomF).Range("D29").Value = Choix3
+    
+    Sheets(NomF).Range("F27").Value = Poids1
+    Sheets(NomF).Range("F28").Value = Poids2
+    Sheets(NomF).Range("F29").Value = Poids3
+    Sheets(NomF).Range("F30").Value = Poids4
+    
+    Sheets(NomF).Range("E27").Value = Qte1
+    Sheets(NomF).Range("E28").Value = Qte2
+    Sheets(NomF).Range("E29").Value = Qte3
+    Sheets(NomF).Range("E30").Value = Qte4
+    
+    Sheets(NomF).Range("G27").Value = PRIX
+     
+End Sub
+
+Function FExist(NomF As String) As Boolean ' test si la feuille existe
+    Application.ScreenUpdating = False
+    On Error Resume Next
+    FExist = Not Sheets(NomF) Is Nothing
+    Application.ScreenUpdating = True
+End Function
+
+Sub duplicateModele(strFeuilName As String)
+' avant de poursuivre on regarde si la feuille existe d├®j├á
+If FExist(strFeuilName) Then
+  recreer = MsgBox("La feuille " & strFeuilName & " existe d├®j├á... !" & vbCrLf & " voulez-vous la recr├®er ?", vbYesNo)
+  ' si on dit de la recr├®er.. on la supprime d'abord..
+  If recreer = 6 Then
+    Application.DisplayAlerts = True
+    Sheets(strFeuilName).Delete
+    Application.DisplayAlerts = False
+  Else
+    Exit Sub
+  End If
+End If
+    'On duplique la feuille mod├¿le
+    Sheets("Modele").Select
+    Sheets("Modele").Copy After:=Sheets(ThisWorkbook.Sheets.Count)
+    'On renomme la feuille
+    ActiveSheet.Name = strFeuilName
+End Sub
+
+-------------------------------------------------------------------------------
+VBA MACRO Module2.bas 
+in file: xl/vbaProject.bin - OLE stream: 'VBA/Module2'
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+
+Sub CreerPdf()
+'
+' CreerPdf Macro
+'
+Dim monDossier As String, monFichier As String
+'Dim Trouve As String
+
+monDossier = ThisWorkbook.Path
+'NomFichier = ""
+
+'monFichier = Left$(NomFichier, InStrRev(NomFichier, ".") - 1)
+ monFichier = ActiveSheet.Name
+
+
+   ' MsgBox ("Dossier : " & monDossier)
+   ' MsgBox ("fichier : " & monFichier)
+    
+    ActiveWorkbook.ExportAsFixedFormat Type:=xlTypePDF, Filename:= _
+      monDossier & "\" & monFichier & ".pdf", Quality:=xlQualityStandard, _
+    IncludeDocProperties:=True, IgnorePrintAreas:=False, OpenAfterPublish:= _
+    True
+End Sub
+
+
++----------+--------------------+---------------------------------------------+
+|Type      |Keyword             |Description                                  |
++----------+--------------------+---------------------------------------------+
+|Suspicious|Call                |May call a DLL using Excel 4 Macros (XLM/XLF)|
+|Suspicious|Hex Strings         |Hex-encoded strings were detected, may be    |
+|          |                    |used to obfuscate strings (option --decode to|
+|          |                    |see all)                                     |
++----------+--------------------+---------------------------------------------+
+
