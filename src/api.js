@@ -1,193 +1,186 @@
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
+// Helper centralisé pour tous les appels API
+const apiFetch = async (url, options = {}) => {
+    const response = await fetch(url, options);
+    let data;
+    try {
+        data = await response.json();
+    } catch {
+        data = null;
+    }
+    if (!response.ok) {
+        throw new Error((data && data.error) || `Erreur ${response.status}`);
+    }
+    return data;
+};
+
 const api = {
     // Clients
-    getClients: () => fetch(`${API_URL}/clients`).then(res => res.json()),
-    addClient: (client) => fetch(`${API_URL}/clients`, {
+    getClients: () => apiFetch(`${API_URL}/clients`),
+    addClient: (client) => apiFetch(`${API_URL}/clients`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(client)
-    }).then(res => res.json()),
-    updateClient: (id, client) => fetch(`${API_URL}/clients/${id}`, {
+    }),
+    updateClient: (id, client) => apiFetch(`${API_URL}/clients/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(client)
-    }).then(res => res.json()),
-    deleteClient: (id) => fetch(`${API_URL}/clients/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
+    }),
+    deleteClient: (id) => apiFetch(`${API_URL}/clients/${id}`, { method: 'DELETE' }),
 
     // Commandes
-    getCommandes: () => fetch(`${API_URL}/commandes`).then(res => res.json()),
-    addCommande: (commande) => fetch(`${API_URL}/commandes`, {
+    getCommandes: () => apiFetch(`${API_URL}/commandes`),
+    addCommande: (commande) => apiFetch(`${API_URL}/commandes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(commande)
-    }).then(res => res.json()),
-    updateCommande: (id, commande) => fetch(`${API_URL}/commandes/${id}`, {
+    }),
+    updateCommande: (id, commande) => apiFetch(`${API_URL}/commandes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(commande)
-    }).then(res => res.json()),
-    deleteCommande: (id) => fetch(`${API_URL}/commandes/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
-    getArticlesCommande: (commandeId) => fetch(`${API_URL}/commandes/${commandeId}/articles`).then(res => res.json()),
+    }),
+    deleteCommande: (id) => apiFetch(`${API_URL}/commandes/${id}`, { method: 'DELETE' }),
+    getArticlesCommande: (commandeId) => apiFetch(`${API_URL}/commandes/${commandeId}/articles`),
 
     // Teintures
-    getTeintures: () => fetch(`${API_URL}/teintures`).then(res => res.json()),
-    addTeinture: (teinture) => fetch(`${API_URL}/teintures`, {
+    getTeintures: () => apiFetch(`${API_URL}/teintures`),
+    addTeinture: (teinture) => apiFetch(`${API_URL}/teintures`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(teinture)
-    }).then(res => res.json()),
-    updateTeinture: (id, teinture) => fetch(`${API_URL}/teintures/${id}`, {
+    }),
+    updateTeinture: (id, teinture) => apiFetch(`${API_URL}/teintures/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(teinture)
-    }).then(res => res.json()),
-    deleteTeinture: (id) => fetch(`${API_URL}/teintures/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
+    }),
+    deleteTeinture: (id) => apiFetch(`${API_URL}/teintures/${id}`, { method: 'DELETE' }),
 
     // Couleurs
-    getCouleurs: () => fetch(`${API_URL}/couleurs`).then(res => res.json()),
-    addCouleur: (couleur) => fetch(`${API_URL}/couleurs`, {
+    getCouleurs: () => apiFetch(`${API_URL}/couleurs`),
+    addCouleur: (couleur) => apiFetch(`${API_URL}/couleurs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(couleur)
-    }).then(res => res.json()),
-    updateCouleur: (id, couleur) => fetch(`${API_URL}/couleurs/${id}`, {
+    }),
+    updateCouleur: (id, couleur) => apiFetch(`${API_URL}/couleurs/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(couleur)
-    }).then(res => res.json()),
-    deleteCouleur: (id) => fetch(`${API_URL}/couleurs/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
+    }),
+    deleteCouleur: (id) => apiFetch(`${API_URL}/couleurs/${id}`, { method: 'DELETE' }),
 
     // Fournisseurs
-    getFournisseurs: () => fetch(`${API_URL}/fournisseurs?t=${new Date().getTime()}`).then(res => res.json()),
-    getFournisseursAvecReceptions: () => fetch(`${API_URL}/fournisseurs/avec-receptions-pendantes`).then(res => res.json()),
-    addFournisseur: (fournisseur) => fetch(`${API_URL}/fournisseurs`, {
+    getFournisseurs: () => apiFetch(`${API_URL}/fournisseurs?t=${Date.now()}`),
+    getFournisseursAvecReceptions: () => apiFetch(`${API_URL}/fournisseurs/avec-receptions-pendantes`),
+    addFournisseur: (fournisseur) => apiFetch(`${API_URL}/fournisseurs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(fournisseur)
-    }).then(res => res.json()),
-    updateFournisseur: (id, fournisseur) => fetch(`${API_URL}/fournisseurs/${id}`, {
+    }),
+    updateFournisseur: (id, fournisseur) => apiFetch(`${API_URL}/fournisseurs/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(fournisseur)
-    }).then(res => res.json()),
-    deleteFournisseur: (id) => fetch(`${API_URL}/fournisseurs/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
+    }),
+    deleteFournisseur: (id) => apiFetch(`${API_URL}/fournisseurs/${id}`, { method: 'DELETE' }),
 
     // Réceptions de Peaux
-    getReceptions: () => fetch(`${API_URL}/receptions`).then(res => res.json()),
-    getReceptionById: (id) => fetch(`${API_URL}/receptions/${id}`).then(res => res.json()),
-    addReception: (reception) => fetch(`${API_URL}/receptions`, {
+    getReceptions: () => apiFetch(`${API_URL}/receptions`),
+    getReceptionById: (id) => apiFetch(`${API_URL}/receptions/${id}`),
+    addReception: (reception) => apiFetch(`${API_URL}/receptions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(reception)
-    }).then(res => res.json()),
-    updateReception: (id, reception) => fetch(`${API_URL}/receptions/${id}`, {
+    }),
+    updateReception: (id, reception) => apiFetch(`${API_URL}/receptions/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(reception)
-    }).then(res => res.json()),
-    deleteReception: (id) => fetch(`${API_URL}/receptions/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
+    }),
+    deleteReception: (id) => apiFetch(`${API_URL}/receptions/${id}`, { method: 'DELETE' }),
     getReceptionsNonFacturees: (fournisseurId) => {
-        const timestamp = new Date().getTime();
-        const baseUrl = fournisseurId ? `${API_URL}/receptions/non-facturees/${fournisseurId}` : `${API_URL}/receptions/non-facturees`;
-        const url = `${baseUrl}?t=${timestamp}`;
-        return fetch(url).then(res => res.json());
+        const url = fournisseurId
+            ? `${API_URL}/receptions/non-facturees/${fournisseurId}?t=${Date.now()}`
+            : `${API_URL}/receptions/non-facturees?t=${Date.now()}`;
+        return apiFetch(url);
     },
 
     // Factures Fournisseurs
-    getFacturesFournisseurs: () => fetch(`${API_URL}/factures-fournisseurs?t=${new Date().getTime()}`).then(res => res.json()),
-    getInvoiceReceptions: (id) => fetch(`${API_URL}/factures-fournisseurs/${id}/receptions`).then(res => res.json()),
-    addFactureFournisseur: (facture) => fetch(`${API_URL}/factures-fournisseurs`, {
+    getFacturesFournisseurs: () => apiFetch(`${API_URL}/factures-fournisseurs?t=${Date.now()}`),
+    getInvoiceReceptions: (id) => apiFetch(`${API_URL}/factures-fournisseurs/${id}/receptions`),
+    addFactureFournisseur: (facture) => apiFetch(`${API_URL}/factures-fournisseurs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(facture)
-    }).then(res => res.json()),
-    updateFactureStatut: (id, statut) => fetch(`${API_URL}/factures-fournisseurs/${id}/statut`, {
+    }),
+    updateFactureStatut: (id, statut) => apiFetch(`${API_URL}/factures-fournisseurs/${id}/statut`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ statut })
-    }).then(res => res.json()),
-    deleteFactureFournisseur: (id) => fetch(`${API_URL}/factures-fournisseurs/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
+    }),
+    deleteFactureFournisseur: (id) => apiFetch(`${API_URL}/factures-fournisseurs/${id}`, { method: 'DELETE' }),
 
     // Achats Produits Chimiques
-    getAchatsChimiques: () => fetch(`${API_URL}/achats-chimiques`).then(res => res.json()),
-    addAchatsChimique: (achat) => fetch(`${API_URL}/achats-chimiques`, {
+    getAchatsChimiques: () => apiFetch(`${API_URL}/achats-chimiques`),
+    addAchatsChimique: (achat) => apiFetch(`${API_URL}/achats-chimiques`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(achat)
-    }).then(res => res.json()),
-    updateAchatsChimique: (id, achat) => fetch(`${API_URL}/achats-chimiques/${id}`, {
+    }),
+    updateAchatsChimique: (id, achat) => apiFetch(`${API_URL}/achats-chimiques/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(achat)
-    }).then(res => res.json()),
-    deleteAchatsChimique: (id) => fetch(`${API_URL}/achats-chimiques/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
+    }),
+    deleteAchatsChimique: (id) => apiFetch(`${API_URL}/achats-chimiques/${id}`, { method: 'DELETE' }),
 
     // Produits Chimiques (Désignations)
-    getProduitsChimiques: () => fetch(`${API_URL}/produits-chimiques`).then(res => res.json()),
-    addProduitChimique: (nom, seuil_min = 0) => fetch(`${API_URL}/produits-chimiques`, {
+    getProduitsChimiques: () => apiFetch(`${API_URL}/produits-chimiques`),
+    addProduitChimique: (nom, seuil_min = 0) => apiFetch(`${API_URL}/produits-chimiques`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nom, seuil_min })
-    }).then(res => res.json()),
-    updateProduitChimique: (id, nom, seuil_min = 0) => fetch(`${API_URL}/produits-chimiques/${id}`, {
+    }),
+    updateProduitChimique: (id, nom, seuil_min = 0) => apiFetch(`${API_URL}/produits-chimiques/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nom, seuil_min })
-    }).then(res => res.json()),
-    deleteProduitChimique: (id) => fetch(`${API_URL}/produits-chimiques/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
+    }),
+    deleteProduitChimique: (id) => apiFetch(`${API_URL}/produits-chimiques/${id}`, { method: 'DELETE' }),
 
     // Stock et Consommation Chimique
-    getStockChimique: () => fetch(`${API_URL}/stock-chimique`).then(res => res.json()),
-    getConsommationsChimiques: () => fetch(`${API_URL}/consommations-chimiques`).then(res => res.json()),
-    addConsommationChimique: (data) => fetch(`${API_URL}/consommations-chimiques`, {
+    getStockChimique: () => apiFetch(`${API_URL}/stock-chimique`),
+    getConsommationsChimiques: () => apiFetch(`${API_URL}/consommations-chimiques`),
+    addConsommationChimique: (data) => apiFetch(`${API_URL}/consommations-chimiques`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-    }).then(res => res.json()),
-    deleteConsommationChimique: (id) => fetch(`${API_URL}/consommations-chimiques/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
+    }),
+    deleteConsommationChimique: (id) => apiFetch(`${API_URL}/consommations-chimiques/${id}`, { method: 'DELETE' }),
 
     // Recettes et Production
-    getRecettes: () => fetch(`${API_URL}/recettes`).then(res => res.json()),
-    addRecette: (data) => fetch(`${API_URL}/recettes`, {
+    getRecettes: () => apiFetch(`${API_URL}/recettes`),
+    addRecette: (data) => apiFetch(`${API_URL}/recettes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-    }).then(res => res.json()),
-    updateRecette: (id, data) => fetch(`${API_URL}/recettes/${id}`, {
+    }),
+    updateRecette: (id, data) => apiFetch(`${API_URL}/recettes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-    }).then(res => res.json()),
-    deleteRecette: (id) => fetch(`${API_URL}/recettes/${id}`, {
-        method: 'DELETE'
-    }).then(res => res.json()),
-    addProduction: (data) => fetch(`${API_URL}/productions`, {
+    }),
+    deleteRecette: (id) => apiFetch(`${API_URL}/recettes/${id}`, { method: 'DELETE' }),
+    addProduction: (data) => apiFetch(`${API_URL}/productions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-    }).then(res => res.json()),
-    getProductionsDetails: () => fetch(`${API_URL}/productions/details`).then(res => res.json()),
+    }),
+    getProductionsDetails: () => apiFetch(`${API_URL}/productions/details`),
 };
 
 export default api;
